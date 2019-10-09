@@ -5,7 +5,9 @@
 #   end-to-end test     does it satisfy my need
 #   black box  test     knows nothing about internal stuff
 import unittest
+import time
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 
 
 class NewVisitorTest(unittest.TestCase):
@@ -28,17 +30,28 @@ class NewVisitorTest(unittest.TestCase):
         # She notices the page title and header mention TODO-list
         self.assertIn("TODO-list", self.browser.title)
 
-        # Optional (behaves like raise Exception)
-        self.fail("Finish the test!")
+        header_text = self.browser.find_element_by_name("h1").text()
+        self.assertIn("TODO-list", header_text)
 
         # She is invited to write her first todo item.
         # She types "Learn TDD with Django & Selenium" into a text box.
+        inputbox = self.browser.find_element_by_id("id_new_item")
+        self.assertEqual(inputbox.get_attribute("placeholder"), "Enter a TODO item")
+
+        inputbox.send_keys("Learn TDD with Django")
 
         # When she hits 'Enter', the page updates, and now the page
         # list '<1> Learn TDD with Django & Selenium'
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(0.5)
+
+        table = self.browser.find_element_by_id("id_list_table")
+        rows = table.find_elements_by_tag_name("tr")
+        self.assertTrue(any(row.text == "1: Learn TDD with Django" for row in rows))
 
         # She then inputs another TODO item, then hits 'Enter',
         # the page updates again, now it shows both the items she added.
+        self.fail("Finish the test!")  # Optional (behaves like raise Exception)
 
         # Now she wonders whether the site will remember her list. Then
         # she sees the sites geenrated a unique URL for her -- there'd be
