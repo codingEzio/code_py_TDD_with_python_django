@@ -8,7 +8,7 @@ flake8 = "*"
 black = "*"
 
 [packages]
-django = "== 1.11.3"
+django = "== 1.11.28"
 selenium = "==3.4.3"
 python-dotenv = "==0.10.3"
 
